@@ -15,11 +15,16 @@ def std():
 	conn = psycopg2.connect('host=%s dbname=%s user=%s password=%s' % (DB_HOST,DB_DB,DB_USER,DB_PW))
 	cur = conn.cursor()
 	if request.method == 'POST':
-		print test
+		tags = request.form['tags']
+		tags = tags.split()
+		article_id = requst.form['id']
+		for tag in tags:
+			cur.execute("""INSERT INTO tags VALUES(%s,%s)""",(tag,article_id))
+			conn.commit()
+		return render_template('index.html',article=article)
 	elif request.method == 'GET':
 		cur.execute("SELECT * from articles order by random() limit 1")
 		res = cur.fetchall()
-		print res
 		article = res[0]
 		return render_template('index.html',article=article)
 		
